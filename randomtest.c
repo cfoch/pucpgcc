@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <time.h>
 #include "pucpgccutils.h"
+
 
 /* colors */
 #define ANSI_COLOR_RED     "\x1b[31m"
@@ -44,12 +46,12 @@ test_array_int_create_random (int * len)
 
   /* *len = rand () % 100 + 1; */
   /* This is arbitrary */
-  *len = 10000;
+  *len = 55000;
 
   array = malloc (*len * sizeof (int));
   for (i = 0; i < *len; i++) {
     /* Random numbers between 1 and 100 */
-    array[i] = rand () % 100 + 1;
+    array[i] = rand ();
   }
   return array;
 }
@@ -80,27 +82,32 @@ test_sort_asc (void (* sort_func) (int *, unsigned int, CmpFunc))
 {
   int len;
   int *array, *b;
-  int asc, same_elements;
+  clock_t start;
+  double time_sort;
+  int asc = 1, same_elements = 1;
 
   printf ("INPUT:\n\t");
   array = test_array_int_create_random (&len);
-  b = array_int_copy (array, len);
+  //b = array_int_copy (array, len);
 
   LOG_ARRAY_INT (array, len);
 
-  printf ("OUTPUT:\n\t");
-  sort_func (array, len, cmp_int_a_func);
+  start = clock();
+  sort_func (array, len, cmp_int_b_func);
+  time_sort = ((double) clock() - start) / CLOCKS_PER_SEC;
   LOG_ARRAY_INT (array, len);
-
+  /*
   asc = array_int_is_asc (array, len);
   same_elements = compare_same_elements (array, b, len);
 
   randomtest ("\tArray is ascending", asc);
   randomtest ("\tArray has same elements that sorted array", same_elements);
 
-  free (array);
   free (b);
+  */
+  free (array);
 
+  printf ("\tTime Sort: %f\n", time_sort);
   return asc && same_elements;
 }
 
@@ -109,27 +116,34 @@ test_sort_desc (void (* sort_func) (int *, unsigned int, CmpFunc))
 {
   int len;
   int *array, *b;
-  int desc, same_elements;
+  int desc = 1, same_elements = 1;
+  clock_t start;
+  double time_sort;
 
   printf ("INPUT:\n\t");
   array = test_array_int_create_random (&len);
-  b = array_int_copy (array, len);
+  //b = array_int_copy (array, len);
 
   LOG_ARRAY_INT (array, len);
 
   printf ("OUTPUT:\n\t");
-  sort_func (array, len, cmp_int_b_func);
-  LOG_ARRAY_INT (array, len);
 
+  start = clock();
+  sort_func (array, len, cmp_int_b_func);
+  time_sort = ((double) clock() - start) / CLOCKS_PER_SEC;
+  LOG_ARRAY_INT (array, len);
+  /*
   desc = array_int_is_desc (array, len);
   same_elements = compare_same_elements (array, b, len);
 
   randomtest ("\tArray is descending", desc);
   randomtest ("\tArray has same elements that sorted array", same_elements);
 
-  free (array);
-  free (b);
 
+  free (b);
+  */
+  free (array);
+  printf ("\tTime Sort: %f\n", time_sort);
   return desc && same_elements;
 }
 
@@ -172,5 +186,5 @@ main (int argc, char ** argv)
   } else
     show_help ();
 
-  return 1;  
+  return 1;
 }
