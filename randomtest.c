@@ -36,41 +36,45 @@ compare_same_elements (int * a, int * b, int len)
   creates a random array of integer of size 10
 
   TODO: Try negative values.
+
   returns: new allocated array of integer
 */
+
+// APLICABLE SOLO PARA MERGE SORT & SELECTION SORT
 int *
-test_array_int_create_random (int * len)
+test_array_int_create_random (int len)
 {
   int i;
   int *array;
 
-  /* *len = rand () % 100 + 1; */
+  /* len = rand () % 100 + 1; */
   /* This is arbitrary */
-  *len = 55000;
 
-  array = malloc (*len * sizeof (int));
-  for (i = 0; i < *len; i++) {
+  array = malloc ((len + 1) * sizeof (int));
+  for (i = 0; i < len; i++) {
     /* Random numbers between 1 and 100 */
     array[i] = rand ();
   }
   return array;
 }
 
+
+
+// APLICABLE SOLO PARA BIT-INDEX SORT
 static int *
-test_array_int_create_non_repeated (int * len)
+test_array_int_create_random_non_repeated (int len)
 {
   int i, element;
   int *array;
 
   /* *len = rand () % 100 + 1; */
   /* This is arbitrary */
-  *len = 5;
 
-  array = malloc (*len * sizeof (int));
+  array = malloc (len * sizeof (int));
 
-  for (i = 0; i < *len; i++) {
+  for (i = 0; i < len; i++) {
     /* This <rand () % (len * 5) + 1)> is arbitrary */
-    while ((element = rand () % (*len * 5) + 1) &&
+    while ((element = rand () % (len * 5) + 1) &&
         array_int_count_element (array, i + 1, element) != 0);
     array[i] = element;
   }
@@ -78,22 +82,21 @@ test_array_int_create_non_repeated (int * len)
 }
 
 static int
-test_sort_asc (void (* sort_func) (int *, unsigned int, CmpFunc))
+test_sort_asc (void (* sort_func) (int *, unsigned int, CmpFunc), int len)
 {
-  int len;
   int *array, *b;
   clock_t start;
   double time_sort;
   int asc = 1, same_elements = 1;
 
   printf ("INPUT:\n\t");
-  array = test_array_int_create_random (&len);
+  array = test_array_int_create_random (len);
   //b = array_int_copy (array, len);
 
   LOG_ARRAY_INT (array, len);
 
   start = clock();
-  sort_func (array, len, cmp_int_b_func);
+  sort_func (array, len, cmp_int_a_func);
   time_sort = ((double) clock() - start) / CLOCKS_PER_SEC;
   LOG_ARRAY_INT (array, len);
   /*
@@ -112,16 +115,15 @@ test_sort_asc (void (* sort_func) (int *, unsigned int, CmpFunc))
 }
 
 static int
-test_sort_desc (void (* sort_func) (int *, unsigned int, CmpFunc))
+test_sort_desc (void (* sort_func) (int *, unsigned int, CmpFunc), int len)
 {
-  int len;
   int *array, *b;
   int desc = 1, same_elements = 1;
   clock_t start;
   double time_sort;
 
   printf ("INPUT:\n\t");
-  array = test_array_int_create_random (&len);
+  array = test_array_int_create_random (len);
   //b = array_int_copy (array, len);
 
   LOG_ARRAY_INT (array, len);
@@ -147,6 +149,39 @@ test_sort_desc (void (* sort_func) (int *, unsigned int, CmpFunc))
   return desc && same_elements;
 }
 
+static int
+test_sort_bit_index (int asc, int len)
+{
+  int *array, *b;
+  int desc = 1, same_elements = 1;
+  clock_t start;
+  double time_sort;
+
+  printf ("INPUT:\n\t");
+  array = test_array_int_create_random_non_repeated (len);
+  b = array_int_copy (array, len);
+
+  LOG_ARRAY_INT (array, len);
+
+  printf ("OUTPUT:\n\t");
+
+  start = clock();
+  array_int_bit_index_sort (array, len, asc);
+  time_sort = ((double) clock() - start) / CLOCKS_PER_SEC;
+  LOG_ARRAY_INT (array, len);
+  desc = array_int_is_desc (array, len);
+  same_elements = compare_same_elements (array, b, len);
+
+  randomtest ("\tArray is descending", desc);
+  randomtest ("\tArray has same elements that sorted array", same_elements);
+
+
+  free (b);
+  free (array);
+  printf ("\tTime Sort: %f\n", time_sort);
+  return desc && same_elements;
+}
+
 static void
 show_help ()
 {
@@ -162,6 +197,9 @@ int
 main (int argc, char ** argv)
 {
   srand (time (NULL));
+  int len = atoi (argv[3]);
+
+  printf ("%d\n", len);
 
   if (!argv[1] || strcmp ("-help", argv[1]) == 0) {
     show_help ();
@@ -169,18 +207,27 @@ main (int argc, char ** argv)
     if (!argv[2]) {
       show_help ();
     } else if (strcmp ("-asc", argv[2]) == 0) {
-      randomtest ("Selection Sort: ", test_sort_asc (array_int_selection_sort));
+      randomtest ("Selection Sort: ", test_sort_asc (array_int_selection_sort, len));
     } else if (strcmp ("-desc", argv[2]) == 0) {
-      randomtest ("Selection Sort: ", test_sort_desc (array_int_selection_sort));
+      randomtest ("Selection Sort: ", test_sort_desc (array_int_selection_sort, len));
     } else
       show_help ();
   } else if (strcmp ("-merge-sort", argv[1]) == 0) {
     if (!argv[2]) {
       show_help ();
     } else if (strcmp ("-asc", argv[2]) == 0) {
-      randomtest ("Merge Sort: ", test_sort_asc (array_int_merge_sort));
+      randomtest ("Merge Sort: ", test_sort_asc (array_int_merge_sort, len));
     } else if (strcmp ("-desc", argv[2]) == 0) {
-      randomtest ("Merge Sort: ", test_sort_desc (array_int_merge_sort));
+      randomtest ("Merge Sort: ", test_sort_desc (array_int_merge_sort, len));
+    } else
+      show_help ();
+  } else if (strcmp ("-bit-index-sort", argv[1]) == 0) {
+    if (!argv[2]) {
+      show_help ();
+    } else if (strcmp ("-asc", argv[2]) == 0) {
+      randomtest ("Bit index Sort: ", test_sort_bit_index (1, len));
+    } else if (strcmp ("-desc", argv[2]) == 0) {
+      randomtest ("Bit index Sort: ", test_sort_bit_index (-1, len));
     } else
       show_help ();
   } else

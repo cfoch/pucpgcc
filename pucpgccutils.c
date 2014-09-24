@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include "pucpgccutils.h"
 
+#define MAX 500
+#define Bit 32
+
 void
 LOG_ARRAY_INT (int * array, unsigned int len)
 {
@@ -155,6 +158,48 @@ array_int_count_element (int * array, unsigned len, int element)
     if (array[i] == element)
       ret++;
   return ret;
+}
+
+void
+array_int_bit_index_sort(int * arr, int len, int asc) {
+    int maxBidx = MAX/Bit+1;
+    unsigned int Bidx[maxBidx];
+    int ind=0;
+    int off=0;
+    int i, j;
+    
+    for(i=0; i<maxBidx; i++)
+       Bidx[i]=0;
+    
+    for (i=0; i<len; i++){
+        ind = arr[i]/Bit;
+        off = arr[i]%Bit;
+        Bidx[ind] = Bidx[ind] | (1<<off); 
+    }
+    
+    i=0;
+
+    if (asc >= 0)
+      for (j=0; j<=maxBidx-1; j++){
+      //for (j=maxBidx-1; j>-1; j--){
+          while (Bidx[j]>0){
+              off=(__builtin_ctz(Bidx[j]));
+              //off=(Bit-1)-(__builtin_clz(Bidx[j]));
+              arr[i] = j*Bit+off;
+              Bidx[j] -= (1<<off);
+              i++;
+          }
+      }
+    else {
+      for (j=maxBidx-1; j>-1; j--){
+          while (Bidx[j]>0){
+              off=(Bit-1)-(__builtin_clz(Bidx[j]));
+              arr[i] = j*Bit+off;
+              Bidx[j] -= (1<<off);
+              i++;
+          }
+      }
+    }
 }
 
 
