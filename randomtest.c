@@ -58,8 +58,6 @@ test_array_int_create_random (int len)
   return array;
 }
 
-
-
 // APLICABLE SOLO PARA BIT-INDEX SORT
 static int *
 test_array_int_create_random_non_repeated (int len)
@@ -159,6 +157,7 @@ test_sort_bit_index (int asc, int len)
 
   printf ("INPUT:\n\t");
   array = test_array_int_create_random_non_repeated (len);
+  assert (array_int_duplicated_elements (array, len) == 0);
   b = array_int_copy (array, len);
 
   LOG_ARRAY_INT (array, len);

@@ -160,8 +160,25 @@ array_int_count_element (int * array, unsigned len, int element)
   return ret;
 }
 
+
+int
+array_int_duplicated_elements(int * array, int len)
+{
+  int i, j;
+  for (i = 0; i < len; i++) {
+    for (j = 0; j < len; j++) {
+      if (i != j)  {
+        if (array[i] == array[j])
+          return 1; // means there are duplicate values
+      }
+    }
+  }
+  return 0; // means there are no duplicate values.
+}
+
+
 void
-array_int_bit_index_sort(int * arr, int len, int asc) {
+array_int_bit_index_sort(int arr[], int len, int asc) {
     int maxBidx = MAX/Bit+1;
     unsigned int Bidx[maxBidx];
     int ind=0;
@@ -179,7 +196,7 @@ array_int_bit_index_sort(int * arr, int len, int asc) {
     
     i=0;
 
-    if (asc >= 0)
+    if (asc >= 0) {
       for (j=0; j<=maxBidx-1; j++){
       //for (j=maxBidx-1; j>-1; j--){
           while (Bidx[j]>0){
@@ -190,7 +207,7 @@ array_int_bit_index_sort(int * arr, int len, int asc) {
               i++;
           }
       }
-    else {
+    } else {
       for (j=maxBidx-1; j>-1; j--){
           while (Bidx[j]>0){
               off=(Bit-1)-(__builtin_clz(Bidx[j]));

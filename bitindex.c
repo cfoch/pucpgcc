@@ -7,9 +7,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#define NUM_ELEM 10
-#define MAX 1000  //Poner un número mayor o igual al verdadero máximo del arreglo
+#define NUM_ELEM 500
+#define MAX 700  //Poner un número mayor o igual al verdadero máximo del arreglo
 #define Bit 32
+#include <time.h>
 
 void pprint(int arr[]) {
     int i;
@@ -37,7 +38,7 @@ void bitIndex_sort(int arr[]) {
     
     i=0;
     for (j=0; j<=maxBidx-1; j++){
-    //for (j=maxBidx-1; j>-1; j--){
+    //for (j=maxBidx-1; j>=0; j--){
         while (Bidx[j]>0){
             off=(__builtin_ctz(Bidx[j]));
             //off=(Bit-1)-(__builtin_clz(Bidx[j]));
@@ -52,8 +53,8 @@ void bitIndex_sort(int arr[]) {
 }
 
 int main(int argc, char** argv) {
-    int arr[NUM_ELEM] = {9, 6, 0, 4, 3, 1, 8, 2, 7, 5};
-    
+    //int arr[NUM_ELEM] = {3, 6, 0, 4}; //3, 1, 8, 2, 9, 5};
+    int arr[NUM_ELEM] = {338, 196, 174, 548, 297, 122, 291, 352, 218, 17, 468, 143, 556, 574, 412, 249, 422, 219, 5, 439, 347, 459, 397, 89, 203, 361, 389, 326, 118, 213, 15, 313, 564, 611, 512, 109, 253, 215, 327, 269, 33, 471, 608, 234, 424, 381, 454, 431, 171, 150, 239, 568, 241, 443, 280, 631, 193, 132, 62, 583, 46, 24, 446, 154, 277, 11, 482, 547, 43, 305, 71, 2, 538, 496, 382, 344, 276, 552, 493, 514, 85, 306, 100, 65, 425, 499, 260, 557, 562, 194, 604, 585, 640, 593, 110, 247, 182, 47, 136, 27, 430, 479, 331, 324, 168, 410, 476, 255, 475, 250, 105, 86, 156, 16, 281, 111, 603, 270, 220, 165, 273, 162, 318, 364, 545, 486, 376, 140, 49, 309}; 
     printf("Arreglo original:\n");
     pprint(arr);
     
@@ -61,5 +62,6 @@ int main(int argc, char** argv) {
     
     printf("Arreglo ordenado:\n");
     pprint(arr);
+
     return (EXIT_SUCCESS);
 }
