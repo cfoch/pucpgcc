@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "pucpgccutils.h"
 
-#define MAX 500
+#define MAX 1000000
 #define Bit 32
 
 void
@@ -178,13 +178,13 @@ array_int_duplicated_elements(int * array, int len)
 
 
 void
-array_int_bit_index_sort(int arr[], int len, int asc) {
+array_int_bit_index_sort(int * arr, int len, int asc) {
     int maxBidx = MAX/Bit+1;
     unsigned int Bidx[maxBidx];
     int ind=0;
     int off=0;
     int i, j;
-    
+
     for(i=0; i<maxBidx; i++)
        Bidx[i]=0;
     
@@ -196,9 +196,9 @@ array_int_bit_index_sort(int arr[], int len, int asc) {
     
     i=0;
 
-    if (asc >= 0) {
+    if (asc >= 0)
       for (j=0; j<=maxBidx-1; j++){
-      //for (j=maxBidx-1; j>-1; j--){
+      //for (j=maxBidx-1; j>=0; j--){
           while (Bidx[j]>0){
               off=(__builtin_ctz(Bidx[j]));
               //off=(Bit-1)-(__builtin_clz(Bidx[j]));
@@ -207,8 +207,8 @@ array_int_bit_index_sort(int arr[], int len, int asc) {
               i++;
           }
       }
-    } else {
-      for (j=maxBidx-1; j>-1; j--){
+    else
+      for (j=maxBidx-1; j>=0; j--){
           while (Bidx[j]>0){
               off=(Bit-1)-(__builtin_clz(Bidx[j]));
               arr[i] = j*Bit+off;
@@ -216,7 +216,6 @@ array_int_bit_index_sort(int arr[], int len, int asc) {
               i++;
           }
       }
-    }
 }
 
 

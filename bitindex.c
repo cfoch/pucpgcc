@@ -7,11 +7,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#define NUM_ELEM 500
+#define NUM_ELEM 130
 #define MAX 700  //Poner un número mayor o igual al verdadero máximo del arreglo
 #define Bit 32
 #include <time.h>
-
 void pprint(int arr[]) {
     int i;
     for (i=0; i<NUM_ELEM; i++)
